@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createPost = exports.allPosts = void 0;
+exports.deletePost = exports.updatePost = exports.createPost = exports.allPosts = void 0;
 var Post_1 = __importDefault(require("../Models/Post"));
 var allPosts = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var posts, err_1;
@@ -54,6 +54,9 @@ var allPosts = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
                 return [3 /*break*/, 3];
             case 2:
                 err_1 = _a.sent();
+                if (!err_1.statusCode) {
+                    err_1.statusCode = 500;
+                }
                 res.status(err_1.statusCode).json(err_1.message);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
@@ -62,18 +65,23 @@ var allPosts = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
 }); };
 exports.allPosts = allPosts;
 var createPost = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var posts, err_2;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var _a, postData, _b, createdBy, newPost, err_2;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, Post_1.default.find()];
+                _c.trys.push([0, 2, , 3]);
+                _a = req.body, postData = _a.postData, _b = _a.createdBy, createdBy = _b === void 0 ? "15" : _b;
+                newPost = new Post_1.default({ postData: postData, createdBy: createdBy });
+                return [4 /*yield*/, newPost.save()];
             case 1:
-                posts = _a.sent();
-                res.status(200).json(posts);
+                _c.sent();
+                res.status(201).json(newPost);
                 return [3 /*break*/, 3];
             case 2:
-                err_2 = _a.sent();
+                err_2 = _c.sent();
+                if (!err_2.statusCode) {
+                    err_2.statusCode = 500;
+                }
                 res.status(err_2.statusCode).json(err_2.message);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
@@ -81,3 +89,60 @@ var createPost = function (req, res) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 exports.createPost = createPost;
+var updatePost = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, _id, _b, createdBy, newPostData, updatePost_1, err_3;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _c.trys.push([0, 2, , 3]);
+                _a = req.body, _id = _a._id, _b = _a.createdBy, createdBy = _b === void 0 ? "15" : _b, newPostData = _a.newPostData;
+                return [4 /*yield*/, Post_1.default.updateOne({
+                        _id: _id,
+                    }, {
+                        $set: {
+                            postData: newPostData,
+                        },
+                    })];
+            case 1:
+                updatePost_1 = _c.sent();
+                res.status(200).json(updatePost_1);
+                return [3 /*break*/, 3];
+            case 2:
+                err_3 = _c.sent();
+                if (!err_3.statusCode) {
+                    err_3.statusCode = 500;
+                }
+                res.status(err_3.statusCode).json(err_3.message);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+exports.updatePost = updatePost;
+var deletePost = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, _id, _b, createdBy, deletePost_1, err_4;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _c.trys.push([0, 2, , 3]);
+                _a = req.body, _id = _a._id, _b = _a.createdBy, createdBy = _b === void 0 ? "15" : _b;
+                return [4 /*yield*/, Post_1.default.deleteOne({
+                        _id: _id,
+                        createdBy: createdBy,
+                    })];
+            case 1:
+                deletePost_1 = _c.sent();
+                res.status(200).json(deletePost_1);
+                return [3 /*break*/, 3];
+            case 2:
+                err_4 = _c.sent();
+                if (!err_4.statusCode) {
+                    err_4.statusCode = 500;
+                }
+                res.status(err_4.statusCode).json(err_4.message);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+exports.deletePost = deletePost;

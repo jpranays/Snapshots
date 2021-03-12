@@ -1,8 +1,14 @@
 import { Router } from "express";
-import { allPosts } from "../Controllers/posts";
-import { createPost } from "../Controllers/posts";
+import {
+	allPosts,
+	createPost,
+	updatePost,
+	deletePost,
+} from "../Controllers/posts";
 
 export const postRouter = Router();
 
 postRouter.get("/", allPosts);
 postRouter.post("/addPost", createPost);
+postRouter.patch("/updatePost", updatePost);
+postRouter.delete("/deletePost", deletePost);
