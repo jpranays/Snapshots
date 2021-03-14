@@ -39,15 +39,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deletePost = exports.updatePost = exports.createPost = exports.allPosts = void 0;
+exports.getPost = exports.deletePost = exports.editPost = exports.editPostLike = exports.addPost = exports.getPosts = void 0;
+var path_1 = __importDefault(require("path"));
+var fs_1 = __importDefault(require("fs"));
 var Post_1 = __importDefault(require("../Models/Post"));
-var allPosts = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+var getPosts = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var posts, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, Post_1.default.find()];
+                return [4 /*yield*/, Post_1.default.find({}, { createdBy: 0, updatedAt: 0, __v: 0 })];
             case 1:
                 posts = _a.sent();
                 res.status(200).json(posts);
@@ -63,15 +65,16 @@ var allPosts = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
         }
     });
 }); };
-exports.allPosts = allPosts;
-var createPost = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, postData, _b, createdBy, newPost, err_2;
+exports.getPosts = getPosts;
+var addPost = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, title, content, _b, file, newPost, err_2;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
                 _c.trys.push([0, 2, , 3]);
-                _a = req.body, postData = _a.postData, _b = _a.createdBy, createdBy = _b === void 0 ? "15" : _b;
-                newPost = new Post_1.default({ postData: postData, createdBy: createdBy });
+                _a = req.body, title = _a.title, content = _a.content;
+                _b = req.file, file = _b === void 0 ? null : _b;
+                newPost = new Post_1.default({ title: title, content: content, image: file === null || file === void 0 ? void 0 : file.filename });
                 return [4 /*yield*/, newPost.save()];
             case 1:
                 _c.sent();
@@ -88,24 +91,24 @@ var createPost = function (req, res) { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-exports.createPost = createPost;
-var updatePost = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, _id, _b, createdBy, newPostData, updatePost_1, err_3;
+exports.addPost = addPost;
+var editPostLike = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, _id, _b, createdBy, updateLike, err_3;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
                 _c.trys.push([0, 2, , 3]);
-                _a = req.body, _id = _a._id, _b = _a.createdBy, createdBy = _b === void 0 ? "15" : _b, newPostData = _a.newPostData;
+                _a = req.body, _id = _a._id, _b = _a.createdBy, createdBy = _b === void 0 ? "15" : _b;
                 return [4 /*yield*/, Post_1.default.updateOne({
                         _id: _id,
                     }, {
-                        $set: {
-                            postData: newPostData,
+                        $inc: {
+                            likes: 1,
                         },
                     })];
             case 1:
-                updatePost_1 = _c.sent();
-                res.status(200).json(updatePost_1);
+                updateLike = _c.sent();
+                res.status(200).json(updateLike);
                 return [3 /*break*/, 3];
             case 2:
                 err_3 = _c.sent();
@@ -118,31 +121,107 @@ var updatePost = function (req, res) { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-exports.updatePost = updatePost;
-var deletePost = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, _id, _b, createdBy, deletePost_1, err_4;
+exports.editPostLike = editPostLike;
+var editPost = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, _id, title, content, prevImage, _b, file, updatedPost, err_4;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
-                _c.trys.push([0, 2, , 3]);
-                _a = req.body, _id = _a._id, _b = _a.createdBy, createdBy = _b === void 0 ? "15" : _b;
-                return [4 /*yield*/, Post_1.default.deleteOne({
+                _c.trys.push([0, 3, , 4]);
+                _a = req.body, _id = _a._id, title = _a.title, content = _a.content, prevImage = _a.prevImage;
+                _b = req.file, file = _b === void 0 ? null : _b;
+                fs_1.default.promises
+                    .unlink(path_1.default.join(path_1.default.resolve(), "../dist/uploads/" + prevImage))
+                    .then(function () { })
+                    .catch(function (err) {
+                    console.log(err);
+                });
+                return [4 /*yield*/, Post_1.default.updateOne({
                         _id: _id,
-                        createdBy: createdBy,
+                    }, {
+                        $set: {
+                            title: title,
+                            content: content,
+                            image: file === null || file === void 0 ? void 0 : file.filename,
+                        },
                     })];
             case 1:
-                deletePost_1 = _c.sent();
-                res.status(200).json(deletePost_1);
-                return [3 /*break*/, 3];
+                _c.sent();
+                return [4 /*yield*/, Post_1.default.findOne({ _id: _id }, { image: 1 })];
             case 2:
+                updatedPost = _c.sent();
+                res.status(200).json(updatedPost);
+                return [3 /*break*/, 4];
+            case 3:
                 err_4 = _c.sent();
                 if (!err_4.statusCode) {
                     err_4.statusCode = 500;
                 }
                 res.status(err_4.statusCode).json(err_4.message);
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+exports.editPost = editPost;
+var deletePost = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, _id, _b, createdBy, prevImage, deletedPost, err_5;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _c.trys.push([0, 3, , 4]);
+                _a = req.body, _id = _a._id, _b = _a.createdBy, createdBy = _b === void 0 ? "15" : _b;
+                return [4 /*yield*/, Post_1.default.findOne({ _id: _id }, { image: 1 })];
+            case 1:
+                prevImage = _c.sent();
+                return [4 /*yield*/, Post_1.default.deleteOne({
+                        _id: _id,
+                    })];
+            case 2:
+                deletedPost = _c.sent();
+                fs_1.default.promises
+                    .unlink(path_1.default.join(path_1.default.resolve(), "../dist/uploads/" + (prevImage === null || prevImage === void 0 ? void 0 : prevImage.image)))
+                    .then(function () { })
+                    .catch(function (err) {
+                    console.log(err);
+                });
+                res.status(200).json(deletedPost);
+                return [3 /*break*/, 4];
+            case 3:
+                err_5 = _c.sent();
+                if (!err_5.statusCode) {
+                    err_5.statusCode = 500;
+                }
+                res.status(err_5.statusCode).json(err_5.message);
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+exports.deletePost = deletePost;
+var getPost = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, _id, _b, createdBy, post, err_6;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _c.trys.push([0, 2, , 3]);
+                _a = req.params, _id = _a._id, _b = _a.createdBy, createdBy = _b === void 0 ? "15" : _b;
+                return [4 /*yield*/, Post_1.default.find({
+                        _id: _id,
+                    }, { createdBy: 0, updatedAt: 0, __v: 0 })];
+            case 1:
+                post = _c.sent();
+                res.status(200).json(post);
+                return [3 /*break*/, 3];
+            case 2:
+                err_6 = _c.sent();
+                if (!err_6.statusCode) {
+                    err_6.statusCode = 500;
+                }
+                res.status(err_6.statusCode).json(err_6.message);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); };
-exports.deletePost = deletePost;
+exports.getPost = getPost;
