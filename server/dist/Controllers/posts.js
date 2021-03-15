@@ -130,19 +130,21 @@ var editPost = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
                 _c.trys.push([0, 3, , 4]);
                 _a = req.body, _id = _a._id, title = _a.title, content = _a.content, prevImage = _a.prevImage;
                 _b = req.file, file = _b === void 0 ? null : _b;
-                fs_1.default.promises
-                    .unlink(path_1.default.join(path_1.default.resolve(), "../dist/uploads/" + prevImage))
-                    .then(function () { })
-                    .catch(function (err) {
-                    console.log(err);
-                });
+                if (file && prevImage) {
+                    fs_1.default.promises
+                        .unlink(path_1.default.join(path_1.default.resolve(), "../dist/uploads/" + prevImage))
+                        .then(function () { })
+                        .catch(function (err) {
+                        console.log(err);
+                    });
+                }
                 return [4 /*yield*/, Post_1.default.updateOne({
                         _id: _id,
                     }, {
                         $set: {
                             title: title,
                             content: content,
-                            image: file === null || file === void 0 ? void 0 : file.filename,
+                            image: file ? file === null || file === void 0 ? void 0 : file.filename : prevImage[0],
                         },
                     })];
             case 1:

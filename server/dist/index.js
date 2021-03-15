@@ -9,6 +9,7 @@ var post_1 = require("./routes/post");
 var multer_1 = __importDefault(require("multer"));
 var path_1 = __importDefault(require("path"));
 var uuid_1 = require("uuid");
+var user_1 = require("./routes/user");
 var app = express_1.default();
 var PORT = process.env.PORT || 5000;
 app.use(express_1.default.json());
@@ -45,6 +46,7 @@ app.use("/posts/updatepost", multer_1.default({
     fileFilter: fileFilter,
 }).single("file"));
 app.use("/posts", post_1.postRouter);
+app.use("/user", user_1.userRouter);
 mongoose_1.default
     .connect("mongodb://localhost:27017/snapshots", {
     useNewUrlParser: true,

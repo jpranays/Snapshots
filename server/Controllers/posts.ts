@@ -54,14 +54,16 @@ export const editPostLike = async (req: Request, res: Response) => {
 export const editPost = async (req: Request, res: Response) => {
 	try {
 		const { _id, title, content, prevImage } = req.body;
-		const { file = null } = req;
-		fs.promises
-			.unlink(path.join(path.resolve(), `../dist/uploads/${prevImage}`))
-			.then(() => {})
-			.catch((err) => {
-				console.log(err);
-			});
+		let { file = null } = req;
 
+		if (file && prevImage) {
+			fs.promises
+				.unlink(path.join(path.resolve(), `../dist/uploads/${prevImage}`))
+				.then(() => {})
+				.catch((err) => {
+					console.log(err);
+				});
+		}
 		await Post.updateOne(
 			{
 				_id: _id,
@@ -70,7 +72,7 @@ export const editPost = async (req: Request, res: Response) => {
 				$set: {
 					title: title,
 					content: content,
-					image: file?.filename,
+					image: file ? file?.filename : prevImage[0],
 				},
 			}
 		);

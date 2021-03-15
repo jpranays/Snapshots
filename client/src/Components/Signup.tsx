@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Button, TextField, Typography } from "@material-ui/core";
+import { Button, Color, TextField, Typography } from "@material-ui/core";
 import CameraEnhanceOutlinedIcon from "@material-ui/icons/CameraEnhanceOutlined";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { Alert } from "@material-ui/lab";
 function Signup() {
 	const [formstate, setFormState] = useState<{
 		username: string;
@@ -14,17 +16,52 @@ function Signup() {
 		password: "",
 		confirmPassword: "",
 	});
+	const [message, setMessage] = useState<{
+		class: any;
+		msg: string;
+	}>({
+		class: "",
+		msg: "",
+	});
 	function handleChange(e: any) {
 		setFormState((prevState) => {
 			return { ...prevState!, [e?.target?.name!]: e?.target?.value! };
 		});
 	}
+	async function handleSubmit(e: React.FormEvent) {
+		e.preventDefault();
+		try {
+			const {
+				data: { message },
+				status,
+			} = await axios.post("/user/signup/", formstate);
+			setFormState({
+				username: "",
+				email: "",
+				password: "",
+				confirmPassword: "",
+			});
+			if (status === 201) {
+				setMessage({
+					class: "success",
+					msg: message,
+				});
+			}
+		} catch (err) {
+			console.log(err);
+			setMessage({
+				class: "error",
+				msg: "Something Went Wrong",
+			});
+		}
+	}
+
 	return (
 		<div
 			style={{
 				display: "flex",
 				width: "100%",
-				height: "80vh",
+				height: "90vh",
 				justifyContent: "center",
 				alignItems: "center",
 			}}
@@ -84,6 +121,7 @@ function Signup() {
 				}}
 				autoComplete="off"
 				autoCorrect="off"
+				onSubmit={handleSubmit}
 			>
 				<Typography
 					variant="h6"
@@ -95,12 +133,18 @@ function Signup() {
 				>
 					Register
 				</Typography>
+				<div className="messages">
+					{message.msg ? (
+						<Alert severity={message.class}>{message.msg}</Alert>
+					) : null}
+				</div>
 				<TextField
 					variant="outlined"
 					label="Username"
 					value={formstate?.username}
 					name="username"
 					onChange={handleChange}
+					required
 				/>
 				<TextField
 					variant="outlined"
@@ -108,6 +152,7 @@ function Signup() {
 					value={formstate?.email}
 					name="email"
 					onChange={handleChange}
+					required
 				/>
 				<TextField
 					variant="outlined"
@@ -116,6 +161,7 @@ function Signup() {
 					name="password"
 					onChange={handleChange}
 					value={formstate?.password}
+					required
 				/>
 				<TextField
 					variant="outlined"
@@ -124,10 +170,11 @@ function Signup() {
 					name="confirmPassword"
 					onChange={handleChange}
 					value={formstate?.confirmPassword}
+					required
 				/>
 				<Button color="primary" variant="contained" type="submit">
 					Register
-				</Button>{" "}
+				</Button>
 				<small>
 					<b>Already have an Account ? </b>
 					<b>

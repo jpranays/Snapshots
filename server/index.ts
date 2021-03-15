@@ -4,6 +4,7 @@ import { postRouter } from "./routes/post";
 import multer from "multer";
 import path from "path";
 import { v4 } from "uuid";
+import { userRouter } from "./routes/user";
 const app = express();
 const PORT: String | Number = process.env.PORT || 5000;
 
@@ -54,7 +55,7 @@ app.use(
 	}).single("file")
 );
 app.use("/posts", postRouter);
-
+app.use("/user", userRouter);
 mongoose
 	.connect("mongodb://localhost:27017/snapshots", {
 		useNewUrlParser: true,

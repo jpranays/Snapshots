@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { Button, TextField, Typography } from "@material-ui/core";
 import CameraEnhanceOutlinedIcon from "@material-ui/icons/CameraEnhanceOutlined";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { Alert } from "@material-ui/lab";
 
 function Login() {
 	const [formstate, setFormState] = useState<{
@@ -11,10 +14,45 @@ function Login() {
 		username: "",
 		password: "",
 	});
+	const [message, setMessage] = useState<{
+		class: any;
+		msg: string;
+	}>({
+		class: "",
+		msg: "",
+	});
+	const history = useHistory();
+	const dispatch = useDispatch();
 	function handleChange(e: any) {
 		setFormState((prevState) => {
 			return { ...prevState!, [e?.target?.name!]: e?.target?.value! };
 		});
+	}
+	async function handleSubmit(e: React.FormEvent) {
+		e.preventDefault();
+		try {
+			const {
+				data: { token, username, _id },
+				status,
+			} = await axios.post("/user/signin/", formstate);
+			setFormState({
+				username: "",
+				password: "",
+			});
+			if (status === 200) {
+				dispatch({
+					type: "AUTH",
+					payload: { token, username, _id, isLoggedIn: true },
+				});
+				history.push("/");
+			}
+		} catch (err) {
+			console.log(err);
+			setMessage({
+				class: "error",
+				msg: "Something Went Wrong",
+			});
+		}
 	}
 	return (
 		<div
@@ -81,6 +119,7 @@ function Login() {
 				}}
 				autoComplete="off"
 				autoCorrect="off"
+				onSubmit={handleSubmit}
 			>
 				<Typography
 					variant="h6"
@@ -92,6 +131,11 @@ function Login() {
 				>
 					Login
 				</Typography>
+				<div className="messages">
+					{message.msg ? (
+						<Alert severity={message.class}>{message.msg}</Alert>
+					) : null}
+				</div>
 				<TextField
 					variant="outlined"
 					label="Username"

@@ -1,6 +1,4 @@
-import { createStore } from "redux";
-
-const postReducer = (
+export const postReducer = (
 	Posts: {
 		_id: string;
 		title: string;
@@ -52,5 +50,3 @@ const postReducer = (
 			return Posts;
 	}
 };
-
-export const store = createStore(postReducer);

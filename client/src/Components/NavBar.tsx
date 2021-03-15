@@ -1,10 +1,16 @@
+import React from "react";
 import { Button } from "@material-ui/core";
 import CameraEnhanceOutlinedIcon from "@material-ui/icons/CameraEnhanceOutlined";
-
-import React from "react";
 import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 
 function NavBar({ setOpen }: { setOpen: Function }) {
+	const { isLoggedIn } = useSelector(({ user }: any) => user);
+	const dispatch = useDispatch();
+	function handleLogout() {
+		dispatch({ type: "LOGOUT" });
+	}
+
 	return (
 		<nav
 			style={{
@@ -23,7 +29,6 @@ function NavBar({ setOpen }: { setOpen: Function }) {
 					color: "royalblue",
 				}}
 			>
-				{/* <h4>SnapShot</h4> */}
 				<CameraEnhanceOutlinedIcon elevation={3} />
 			</div>
 			<div
@@ -34,35 +39,46 @@ function NavBar({ setOpen }: { setOpen: Function }) {
 					marginRight: 10,
 				}}
 			>
-				<Link
-					to="/signup"
-					style={{
-						textDecoration: "none",
-					}}
-				>
-					<Button variant="contained" color="default">
-						Register
-					</Button>
-				</Link>
-				<Link
-					to="/login"
-					style={{
-						textDecoration: "none",
-					}}
-				>
-					<Button variant="contained" color="default">
-						Login
-					</Button>
-				</Link>
-				<Button
-					variant="outlined"
-					color="primary"
-					onClick={() => {
-						setOpen(true);
-					}}
-				>
-					Create SnapShot
-				</Button>
+				{!isLoggedIn && (
+					<>
+						<Link
+							to="/signup"
+							style={{
+								textDecoration: "none",
+							}}
+						>
+							<Button variant="contained" color="default">
+								Register
+							</Button>
+						</Link>
+						<Link
+							to="/login"
+							style={{
+								textDecoration: "none",
+							}}
+						>
+							<Button variant="contained" color="default">
+								Login
+							</Button>
+						</Link>
+					</>
+				)}
+				{isLoggedIn && (
+					<>
+						<Button
+							variant="contained"
+							color="primary"
+							onClick={() => {
+								setOpen(true);
+							}}
+						>
+							Create SnapShot
+						</Button>
+						<Button variant="contained" color="default" onClick={handleLogout}>
+							Logout
+						</Button>
+					</>
+				)}
 			</div>
 		</nav>
 	);

@@ -51,11 +51,10 @@ function DialogBox({
 		const formData = new FormData();
 		formData.append("title", formState.title);
 		formData.append("content", formState.content);
-		formData.append("prevImage", image);
 		formData.append("file", formState.image ? formState.image : image);
+		formData.append("_id", _id!);
 		if (editing) {
-			formData.append("_id", _id!);
-			let myImage = null;
+			formData.append("prevImage", image);
 			if (formState.image) {
 				const {
 					data: { image: myImage },
@@ -74,7 +73,14 @@ function DialogBox({
 					},
 				});
 			} else {
-				myImage = image;
+				formData.append("prevImage", "");
+				const {
+					data: { image: myImage },
+				} = await axios.post("/posts/updatepost", formData, {
+					headers: {
+						"Content-Type": "multipart/form-data",
+					},
+				});
 				dispatch({
 					type: "EDIT",
 					payload: {

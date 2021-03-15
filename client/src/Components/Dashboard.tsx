@@ -17,20 +17,43 @@ function Dashboard() {
 		createdAt: Date;
 	}>();
 	const [editing, setEditing] = useState(false);
-	const posts = useSelector(
-		(
-			state: {
-				_id: string;
-				title: string;
-				content: string;
-				likes: number;
-				image: any;
-				createdAt: Date;
-			}[]
-		) => state
+	const posts: {
+		_id: string;
+		title: string;
+		content: string;
+		likes: number;
+		image: any;
+		createdAt: Date;
+	}[] = useSelector(
+		({
+			post,
+		}:
+			| {
+					_id: string;
+					title: string;
+					content: string;
+					likes: number;
+					image: any;
+					createdAt: Date;
+			  }[]
+			| any) => post
 	);
 	const dispatch = useDispatch();
+	useEffect(() => {
+		const handleInvalidToken = (e: any) => {
+			if (e.key === "token" && e.oldValue && !e.newValue) {
+				// Your logout logic here
 
+				console.log(e);
+				// logoutAction(history);
+			}
+			console.log("Asdasd");
+		};
+		window.addEventListener("storage", handleInvalidToken);
+		return function cleanup() {
+			window.removeEventListener("storage", handleInvalidToken);
+		};
+	}, [dispatch]);
 	async function handleLike(_id: String) {
 		await axios.post("/posts/updatepostlike", { _id });
 		dispatch({ type: "LIKE", payload: _id });
