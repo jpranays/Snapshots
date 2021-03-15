@@ -136,7 +136,6 @@ function DialogBox({
 						label="Content"
 						multiline
 						rows={4}
-						defaultValue="This Was A Really Nice Day !"
 						variant="outlined"
 						style={{
 							width: "100%",
