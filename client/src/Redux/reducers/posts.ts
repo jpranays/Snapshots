@@ -5,6 +5,10 @@ export const postReducer = (
 		content: string;
 		likes: number;
 		image: any;
+		createdBy: {
+			_id: string;
+			username: string;
+		};
 		createdAt: Date;
 	}[] = [],
 	action: {

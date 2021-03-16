@@ -5,7 +5,10 @@ type PostModel = Document & {
 	content: String;
 	image: String;
 	likes: Number;
-	createdBy: String;
+	createdBy: {
+		_id: String;
+		username: String;
+	};
 };
 const PostSchema = new Schema(
 	{
@@ -16,7 +19,10 @@ const PostSchema = new Schema(
 			type: Number,
 			default: 0,
 		},
-		createdBy: String,
+		createdBy: {
+			_id: String,
+			username: String,
+		},
 	},
 	{
 		_id: true,

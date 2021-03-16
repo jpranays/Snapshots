@@ -9,7 +9,10 @@ var PostSchema = new mongoose_1.Schema({
         type: Number,
         default: 0,
     },
-    createdBy: String,
+    createdBy: {
+        _id: String,
+        username: String,
+    },
 }, {
     _id: true,
     timestamps: true,

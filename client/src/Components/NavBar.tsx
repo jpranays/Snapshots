@@ -18,7 +18,12 @@ function NavBar({ setOpen }: { setOpen: Function }) {
 				width: "100%",
 				height: "9vh",
 				alignItems: "center",
+				position: "sticky",
+				top: 0,
+				zIndex: 1,
+				boxShadow: "1px 1px 10px 1px  gray",
 			}}
+			className="background"
 		>
 			<div
 				className="header-container"
@@ -26,7 +31,7 @@ function NavBar({ setOpen }: { setOpen: Function }) {
 					textAlign: "left",
 					marginLeft: "5px",
 					marginRight: "auto",
-					color: "royalblue",
+					color: "black",
 				}}
 			>
 				<CameraEnhanceOutlinedIcon elevation={3} />
@@ -67,7 +72,7 @@ function NavBar({ setOpen }: { setOpen: Function }) {
 					<>
 						<Button
 							variant="contained"
-							color="primary"
+							color="secondary"
 							onClick={() => {
 								setOpen(true);
 							}}

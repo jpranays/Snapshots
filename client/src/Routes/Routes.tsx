@@ -22,7 +22,7 @@ function Routes() {
 				try {
 					const {
 						data: {
-							decodedData: { _id, username },
+							decodedData: { _id, username, avatar },
 						},
 					} = await axios.post("/user/verifytoken/", {
 						oldToken,
@@ -35,6 +35,7 @@ function Routes() {
 							username: username,
 							_id: _id,
 							isLoggedIn: true,
+							avatar: avatar,
 						},
 					});
 				} catch (err) {
@@ -59,6 +60,11 @@ function Routes() {
 				});
 			}
 		};
+		setTimeout(() => {
+			dispatch({
+				type: "LOGOUT",
+			});
+		}, 1000 * 60 * 60);
 		window.addEventListener("storage", handleInvalidToken, false);
 		return function () {
 			window.removeEventListener("storage", handleInvalidToken, false);

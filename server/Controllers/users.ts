@@ -44,7 +44,10 @@ export const signin = async (req: Request, res: Response) => {
 		}
 
 		const token = jwt.sign(
-			{ _id: existingUser._id, username: username },
+			{
+				_id: existingUser._id,
+				username: username,
+			},
 			"test",
 			{
 				expiresIn: "1h",

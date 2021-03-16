@@ -102,7 +102,10 @@ var signin = function (req, res) { return __awaiter(void 0, void 0, void 0, func
                             .status(422)
                             .json({ message: "Username or Password wont match" })];
                 }
-                token = jsonwebtoken_1.default.sign({ _id: existingUser._id, username: username }, "test", {
+                token = jsonwebtoken_1.default.sign({
+                    _id: existingUser._id,
+                    username: username,
+                }, "test", {
                     expiresIn: "1h",
                 });
                 return [2 /*return*/, res.status(200).json({

@@ -75,6 +75,7 @@ function Signup() {
 					position: "fixed",
 					top: 0,
 				}}
+				className="background"
 			>
 				<div
 					className="header-container"
@@ -82,7 +83,7 @@ function Signup() {
 						textAlign: "left",
 						marginLeft: "5px",
 						marginRight: "auto",
-						color: "royalblue",
+						color: "black",
 					}}
 				>
 					{/* <h4>SnapShot</h4> */}

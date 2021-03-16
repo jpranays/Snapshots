@@ -4,6 +4,7 @@ type UserModel = Document & {
 	username: string;
 	email: string;
 	password: string;
+	avatar: [number];
 };
 const UserSchema = new Schema(
 	{

@@ -7,12 +7,13 @@ import {
 	deletePost,
 	editPostLike,
 } from "../Controllers/posts";
+import { auth } from "../middleware/auth";
 
 export const postRouter = Router();
 
 postRouter.get("/", getPosts);
-postRouter.get("/:_id", getPost);
-postRouter.post("/addpost", addPost);
-postRouter.post("/updatepost", editPost);
-postRouter.post("/updatepostlike", editPostLike);
-postRouter.post("/deletepost", deletePost);
+postRouter.get("/:_id", auth, getPost);
+postRouter.post("/addpost", auth, addPost);
+postRouter.post("/updatepost", auth, editPost);
+postRouter.post("/updatepostlike", auth, editPostLike);
+postRouter.post("/deletepost", auth, deletePost);

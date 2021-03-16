@@ -2,10 +2,9 @@ import { Request, Response } from "express";
 import path from "path";
 import fs from "fs";
 import Post from "../Models/Post";
-
 export const getPosts = async (req: Request, res: Response) => {
 	try {
-		const posts = await Post.find({}, { createdBy: 0, updatedAt: 0, __v: 0 });
+		const posts = await Post.find({}, { updatedAt: 0, __v: 0 });
 		res.status(200).json(posts);
 	} catch (err) {
 		if (!err.statusCode) {
@@ -14,12 +13,21 @@ export const getPosts = async (req: Request, res: Response) => {
 		res.status(err.statusCode).json(err.message);
 	}
 };
-export const addPost = async (req: Request, res: Response) => {
+export const addPost = async (req: Request | any, res: Response) => {
 	try {
 		const { title, content } = req.body;
 		const { file = null } = req;
+		const createdBy = {
+			_id: req._id,
+			username: req.username,
+		};
 
-		const newPost = new Post({ title, content, image: file?.filename });
+		const newPost = new Post({
+			title,
+			content,
+			image: file?.filename,
+			createdBy,
+		});
 		await newPost.save();
 		res.status(201).json(newPost);
 	} catch (err) {
@@ -29,13 +37,12 @@ export const addPost = async (req: Request, res: Response) => {
 		res.status(err.statusCode).json(err.message);
 	}
 };
-export const editPostLike = async (req: Request, res: Response) => {
+export const editPostLike = async (req: Request | any, res: Response) => {
 	try {
-		const { _id, createdBy = "15" } = req.body;
+		const { _id } = req.body;
 		let updateLike = await Post.updateOne(
 			{
 				_id: _id,
-				// createdBy: createdBy,
 			},
 			{
 				$inc: {
@@ -51,15 +58,18 @@ export const editPostLike = async (req: Request, res: Response) => {
 		res.status(err.statusCode).json(err.message);
 	}
 };
-export const editPost = async (req: Request, res: Response) => {
+export const editPost = async (req: Request | any, res: Response) => {
 	try {
 		const { _id, title, content, prevImage } = req.body;
-		let { file = null } = req;
+		const { file = null } = req;
+		const createdBy = {
+			_id: req._id,
+			username: req.username,
+		};
 
 		if (file && prevImage) {
 			fs.promises
 				.unlink(path.join(path.resolve(), `../dist/uploads/${prevImage}`))
-				.then(() => {})
 				.catch((err) => {
 					console.log(err);
 				});
@@ -67,6 +77,7 @@ export const editPost = async (req: Request, res: Response) => {
 		await Post.updateOne(
 			{
 				_id: _id,
+				"createdBy._id": createdBy._id,
 			},
 			{
 				$set: {
@@ -85,20 +96,26 @@ export const editPost = async (req: Request, res: Response) => {
 		res.status(err.statusCode).json(err.message);
 	}
 };
-export const deletePost = async (req: Request, res: Response) => {
+export const deletePost = async (req: Request | any, res: Response) => {
 	try {
-		const { _id, createdBy = "15" } = req.body;
+		const { _id } = req.body;
+		const createdBy = {
+			_id: req._id,
+			username: req.username,
+		};
+
 		let prevImage = await Post.findOne({ _id: _id }, { image: 1 });
 
 		let deletedPost = await Post.deleteOne({
 			_id: _id,
+			"createdBy._id": createdBy._id,
 		});
 		fs.promises
 			.unlink(path.join(path.resolve(), `../dist/uploads/${prevImage?.image}`))
-			.then(() => {})
 			.catch((err) => {
 				console.log(err);
 			});
+
 		res.status(200).json(deletedPost);
 	} catch (err) {
 		if (!err.statusCode) {
@@ -108,13 +125,18 @@ export const deletePost = async (req: Request, res: Response) => {
 	}
 };
 
-export const getPost = async (req: Request, res: Response) => {
+export const getPost = async (req: Request | any, res: Response) => {
 	try {
-		const { _id, createdBy = "15" } = req.params;
+		const { _id } = req.params;
+		const createdBy = {
+			_id: req._id,
+			username: req.username,
+		};
+
 		const post = await Post.find(
 			{
 				_id: _id,
-				// createdBy: createdBy,
+				"createdBy._id": createdBy._id,
 			},
 			{ createdBy: 0, updatedAt: 0, __v: 0 }
 		);

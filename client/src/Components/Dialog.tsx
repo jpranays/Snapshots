@@ -61,6 +61,9 @@ function DialogBox({
 				} = await axios.post("/posts/updatepost", formData, {
 					headers: {
 						"Content-Type": "multipart/form-data",
+						Authorization: `Bearer ${
+							JSON.parse(localStorage.getItem("profile")!).token
+						}`,
 					},
 				});
 
@@ -79,6 +82,9 @@ function DialogBox({
 				} = await axios.post("/posts/updatepost", formData, {
 					headers: {
 						"Content-Type": "multipart/form-data",
+						Authorization: `Bearer ${
+							JSON.parse(localStorage.getItem("profile")!).token
+						}`,
 					},
 				});
 				dispatch({
@@ -90,12 +96,14 @@ function DialogBox({
 					},
 				});
 			}
-
 			setEditing!(false);
 		} else {
 			let { data } = await axios.post("/posts/addpost", formData, {
 				headers: {
 					"Content-Type": "multipart/form-data",
+					Authorization: `Bearer ${
+						JSON.parse(localStorage.getItem("profile")!).token
+					}`,
 				},
 			});
 			dispatch({ type: "ADD", payload: data });

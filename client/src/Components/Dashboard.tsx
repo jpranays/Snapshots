@@ -23,6 +23,10 @@ function Dashboard() {
 		content: string;
 		likes: number;
 		image: any;
+		createdBy: {
+			_id: string;
+			username: string;
+		};
 		createdAt: Date;
 	}[] = useSelector(
 		({
@@ -34,45 +38,61 @@ function Dashboard() {
 					content: string;
 					likes: number;
 					image: any;
+					createdBy: {
+						_id: string;
+						username: string;
+					};
 					createdAt: Date;
 			  }[]
 			| any) => post
 	);
 	const dispatch = useDispatch();
-	useEffect(() => {
-		const handleInvalidToken = (e: any) => {
-			if (e.key === "token" && e.oldValue && !e.newValue) {
-				// Your logout logic here
 
-				console.log(e);
-				// logoutAction(history);
-			}
-			console.log("Asdasd");
-		};
-		window.addEventListener("storage", handleInvalidToken);
-		return function cleanup() {
-			window.removeEventListener("storage", handleInvalidToken);
-		};
-	}, [dispatch]);
 	async function handleLike(_id: String) {
-		await axios.post("/posts/updatepostlike", { _id });
+		await axios.post(
+			"/posts/updatepostlike",
+			{ _id },
+			{
+				headers: {
+					Authorization: `Bearer ${
+						JSON.parse(localStorage.getItem("profile")!).token
+					}`,
+				},
+			}
+		);
 		dispatch({ type: "LIKE", payload: _id });
 	}
 	async function handleEdit(_id: String) {
 		setEditing(true);
 		const {
 			data: [data],
-		} = await axios.get(`/posts/${_id}`);
+		} = await axios.get(`/posts/${_id}`, {
+			headers: {
+				Authorization: `Bearer ${
+					JSON.parse(localStorage.getItem("profile")!).token
+				}`,
+			},
+		});
 		setCurrentPost(data);
 		setOpen(true);
 	}
 	async function handleDelete(_id: String) {
-		await axios.post("/posts/deletepost", { _id });
+		await axios.post(
+			"/posts/deletepost",
+			{ _id },
+			{
+				headers: {
+					Authorization: `Bearer ${
+						JSON.parse(localStorage.getItem("profile")!).token
+					}`,
+				},
+			}
+		);
 		dispatch({ type: "DELETE", payload: _id });
 	}
 	useEffect(() => {
 		(async () => {
-			let { data } = await axios.get("/posts/");
+			let { data } = await axios.get("/posts/", {});
 			dispatch({ type: "FETCH", payload: data });
 		})();
 	}, [dispatch]);
@@ -103,6 +123,7 @@ function Dashboard() {
 					<div
 						style={{
 							display: "grid",
+							marginTop: 20,
 							gap: 10,
 							padding: 10,
 							gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))",
@@ -111,20 +132,23 @@ function Dashboard() {
 							width: "100%",
 						}}
 					>
-						{posts.map(({ _id, title, content, image, likes, createdAt }) => (
-							<Post
-								_id={_id}
-								title={title}
-								content={content}
-								image={image}
-								likes={likes}
-								createdAt={createdAt}
-								handleDelete={handleDelete}
-								handleEdit={handleEdit}
-								handleLike={handleLike}
-								key={_id}
-							/>
-						))}
+						{posts.map(
+							({ _id, title, content, image, likes, createdAt, createdBy }) => (
+								<Post
+									_id={_id}
+									title={title}
+									content={content}
+									image={image}
+									likes={likes}
+									createdBy={createdBy}
+									createdAt={createdAt}
+									handleDelete={handleDelete}
+									handleEdit={handleEdit}
+									handleLike={handleLike}
+									key={_id}
+								/>
+							)
+						)}
 					</div>
 				) : (
 					<Snapshot />

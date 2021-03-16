@@ -28,6 +28,21 @@
 				font-family: "Poppins", sans-serif;
 				overflow-x: hidden;
 			}
+			.background {
+				background: linear-gradient(120deg, #ff00f7, #00d0ff) center center;
+				/* background: linear-gradient(-45deg, red, #e73c7e, #23a6d5, blue); */
+				animation: backgroundAnimation 10s alternate-reverse;
+				background-size: 400%;
+				height: "100%";
+				background-repeat: no-repeat;
+				animation-iteration-count: infinite;
+				animation-timing-function: linear;
+			}
+			@keyframes backgroundAnimation {
+				to {
+					background-position: 100%;
+				}
+			}
 		</style>
 	</head>
 	<body>

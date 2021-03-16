@@ -13,12 +13,14 @@ import { red } from "@material-ui/core/colors";
 import { Delete } from "@material-ui/icons";
 import EditIcon from "@material-ui/icons/Edit";
 import CardActionArea from "@material-ui/core/CardActionArea";
+import { useSelector } from "react-redux";
 
 function Post({
 	_id,
 	title,
 	content,
 	likes,
+	createdBy,
 	createdAt,
 	handleEdit,
 	handleDelete,
@@ -30,6 +32,10 @@ function Post({
 	content: string;
 	likes: number;
 	image: any;
+	createdBy: {
+		_id: string;
+		username: string;
+	};
 	createdAt: Date;
 	handleEdit: Function;
 	handleDelete: Function;
@@ -37,16 +43,19 @@ function Post({
 }) {
 	const useStyles = makeStyles({
 		root: {
-			maxWidth: 345,
+			maxWidth: 350,
+			width: 280,
 		},
 		media: {
 			height: 200,
 		},
 		avatar: {
-			backgroundColor: red[500],
+			backgroundColor: "#B6B6B6",
 		},
 	});
 	const classes = useStyles();
+	const { _id: user_id, isLoggedIn } = useSelector(({ user }: any) => user);
+
 	return (
 		<Card
 			key={_id}
@@ -60,20 +69,22 @@ function Post({
 				<CardHeader
 					avatar={
 						<Avatar aria-label="recipe" className={classes.avatar}>
-							R
+							{createdBy.username[0].toUpperCase()}
 						</Avatar>
 					}
-					title="Shrimp and Chorizo Paella"
-					subheader={new Date(createdAt).toLocaleString()}
+					title={createdBy.username}
+					subheader={new Date(createdAt).toLocaleDateString()}
 					action={
-						<IconButton
-							aria-label="settings"
-							onClick={() => {
-								handleEdit(_id);
-							}}
-						>
-							<EditIcon />
-						</IconButton>
+						user_id === createdBy._id && (
+							<IconButton
+								aria-label="settings"
+								onClick={() => {
+									handleEdit(_id);
+								}}
+							>
+								<EditIcon />
+							</IconButton>
+						)
 					}
 					onClick={(e: React.MouseEvent) => {
 						e.stopPropagation();
@@ -101,6 +112,7 @@ function Post({
 						onClick={() => {
 							handleLike(_id);
 						}}
+						disabled={!isLoggedIn ? true : false}
 					>
 						<Typography
 							variant="body2"
@@ -114,17 +126,19 @@ function Post({
 						</Typography>
 						<FavoriteIcon color="primary" />
 					</IconButton>
-					<IconButton
-						style={{
-							marginLeft: "auto",
-						}}
-						onClick={() => {
-							handleDelete(_id);
-						}}
-						aria-label="add to favorites"
-					>
-						<Delete color="error" />
-					</IconButton>
+					{user_id === createdBy._id && (
+						<IconButton
+							style={{
+								marginLeft: "auto",
+							}}
+							onClick={() => {
+								handleDelete(_id);
+							}}
+							aria-label="add to favorites"
+						>
+							<Delete color="error" />
+						</IconButton>
+					)}
 				</div>
 			</CardActions>
 		</Card>

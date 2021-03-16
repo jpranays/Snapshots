@@ -7,19 +7,16 @@ function Snapshot() {
 				textAlign: "center",
 				marginTop: 200,
 				color: "black",
-				textShadow: "2px 1px 1px black",
-				WebkitTextStroke: "1px black",
-				WebkitTextFillColor: "transparent",
+				textShadow: "2px 1px 1px gray",
 				userSelect: "none",
 			}}
 		>
 			Create an Awesome{" "}
 			<b
 				style={{
-					color: "royalblue",
+					color: "gold",
 					textShadow: "none",
-					WebkitTextStroke: "1px royalblue",
-					WebkitTextFillColor: "transparent",
+					WebkitTextFillColor: "gold",
 					display: "block",
 					fontSize: "30px",
 				}}
