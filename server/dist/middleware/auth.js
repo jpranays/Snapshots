@@ -12,7 +12,6 @@ var auth = function (req, res, next) {
         var decodedData = jsonwebtoken_1.default.verify(token, "test");
         req._id = decodedData === null || decodedData === void 0 ? void 0 : decodedData._id;
         req.username = decodedData === null || decodedData === void 0 ? void 0 : decodedData.username;
-        console.log(req._id, req.username);
         next();
     }
     catch (err) {

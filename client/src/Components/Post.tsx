@@ -1,19 +1,22 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import React, { memo } from "react";
+import { useSelector } from "react-redux";
+
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
-import Typography from "@material-ui/core/Typography";
+import CardActionArea from "@material-ui/core/CardActionArea";
 import CardHeader from "@material-ui/core/CardHeader";
+
+import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
+
 import IconButton from "@material-ui/core/IconButton";
 import FavoriteIcon from "@material-ui/icons/Favorite";
-import { red } from "@material-ui/core/colors";
 import { Delete } from "@material-ui/icons";
 import EditIcon from "@material-ui/icons/Edit";
-import CardActionArea from "@material-ui/core/CardActionArea";
-import { useSelector } from "react-redux";
+
+import { makeStyles } from "@material-ui/core/styles";
 
 function Post({
 	_id,
@@ -145,4 +148,4 @@ function Post({
 	);
 }
 
-export default Post;
+export default memo(Post);

@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
+
 import axios from "axios";
+
 import DialogBox from "./Dialog";
 import NavBar from "./NavBar";
 import Snapshot from "./Snapshot";
 import Post from "./Post";
+import { allPosts, deletePost, editPostLike } from "../api";
 
 function Dashboard() {
 	const [open, setOpen] = useState<boolean>(false);
@@ -47,22 +50,13 @@ function Dashboard() {
 			| any) => post
 	);
 	const dispatch = useDispatch();
-
-	async function handleLike(_id: String) {
-		await axios.post(
-			"/posts/updatepostlike",
-			{ _id },
-			{
-				headers: {
-					Authorization: `Bearer ${
-						JSON.parse(localStorage.getItem("profile")!).token
-					}`,
-				},
-			}
-		);
-		dispatch({ type: "LIKE", payload: _id });
-	}
-	async function handleEdit(_id: String) {
+	const handleLike = useCallback(
+		(_id: string) => {
+			dispatch(editPostLike(_id));
+		},
+		[dispatch]
+	);
+	const handleEdit = useCallback(async (_id: String) => {
 		setEditing(true);
 		const {
 			data: [data],
@@ -75,44 +69,33 @@ function Dashboard() {
 		});
 		setCurrentPost(data);
 		setOpen(true);
-	}
-	async function handleDelete(_id: String) {
-		await axios.post(
-			"/posts/deletepost",
-			{ _id },
-			{
-				headers: {
-					Authorization: `Bearer ${
-						JSON.parse(localStorage.getItem("profile")!).token
-					}`,
-				},
-			}
-		);
-		dispatch({ type: "DELETE", payload: _id });
-	}
+	}, []);
+	const handleDelete = useCallback(
+		(_id: string) => {
+			dispatch(deletePost(_id));
+		},
+		[dispatch]
+	);
 	useEffect(() => {
-		(async () => {
-			let { data } = await axios.get("/posts/", {});
-			dispatch({ type: "FETCH", payload: data });
-		})();
+		dispatch(allPosts());
 	}, [dispatch]);
+
+	const SetOpen = useCallback(setOpen, [setOpen]);
+	const SetEditing = useCallback(setEditing, [setEditing]);
 
 	return (
 		<>
-			<NavBar setOpen={setOpen} />
+			<NavBar setOpen={SetOpen} />
 			{open && editing ? (
 				<DialogBox
 					open={open}
 					editing={editing}
-					setOpen={setOpen}
-					setEditing={setEditing}
-					_id={currentPost?._id!}
-					title={currentPost?.title!}
-					content={currentPost?.content!}
-					image={currentPost?.image}
+					setOpen={SetOpen}
+					setEditing={SetEditing}
+					currentPost={currentPost}
 				/>
 			) : open ? (
-				<DialogBox open={open} setOpen={setOpen} />
+				<DialogBox open={open} setOpen={SetOpen} />
 			) : null}
 			<div
 				style={{
@@ -135,6 +118,7 @@ function Dashboard() {
 						{posts.map(
 							({ _id, title, content, image, likes, createdAt, createdBy }) => (
 								<Post
+									key={_id}
 									_id={_id}
 									title={title}
 									content={content}
@@ -145,7 +129,6 @@ function Dashboard() {
 									handleDelete={handleDelete}
 									handleEdit={handleEdit}
 									handleLike={handleLike}
-									key={_id}
 								/>
 							)
 						)}
@@ -158,4 +141,4 @@ function Dashboard() {
 	);
 }
 
-export default Dashboard;
+export default memo(Dashboard);

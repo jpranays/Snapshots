@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
+import { Link, useHistory } from "react-router-dom";
+
+import { useDispatch } from "react-redux";
+
 import { Button, TextField, Typography } from "@material-ui/core";
 import CameraEnhanceOutlinedIcon from "@material-ui/icons/CameraEnhanceOutlined";
-import { Link, useHistory } from "react-router-dom";
-import axios from "axios";
-import { useDispatch } from "react-redux";
 import { Alert } from "@material-ui/lab";
+
+import { signIN } from "../api";
 
 function Login() {
 	const [formstate, setFormState] = useState<{
@@ -14,6 +17,7 @@ function Login() {
 		username: "",
 		password: "",
 	});
+
 	const [message, setMessage] = useState<{
 		class: any;
 		msg: string;
@@ -21,8 +25,10 @@ function Login() {
 		class: "",
 		msg: "",
 	});
+
 	const history = useHistory();
 	const dispatch = useDispatch();
+
 	function handleChange(e: any) {
 		setFormState((prevState) => {
 			return { ...prevState!, [e?.target?.name!]: e?.target?.value! };
@@ -30,29 +36,7 @@ function Login() {
 	}
 	async function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
-		try {
-			const {
-				data: { token, username, _id },
-				status,
-			} = await axios.post("/user/signin/", formstate);
-			setFormState({
-				username: "",
-				password: "",
-			});
-			if (status === 200) {
-				dispatch({
-					type: "AUTH",
-					payload: { token, username, _id, isLoggedIn: true },
-				});
-				history.push("/");
-			}
-		} catch (err) {
-			console.log(err);
-			setMessage({
-				class: "error",
-				msg: "Something Went Wrong",
-			});
-		}
+		dispatch(signIN(formstate, setFormState, setMessage, history));
 	}
 	return (
 		<div
@@ -84,7 +68,6 @@ function Login() {
 						color: "black",
 					}}
 				>
-					{/* <h4>SnapShot</h4> */}
 					<CameraEnhanceOutlinedIcon elevation={3} />
 				</div>
 				<div
@@ -168,4 +151,4 @@ function Login() {
 	);
 }
 
-export default Login;
+export default memo(Login);

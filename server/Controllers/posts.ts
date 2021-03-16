@@ -1,19 +1,25 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import path from "path";
 import fs from "fs";
 import Post from "../Models/Post";
-export const getPosts = async (req: Request, res: Response) => {
+
+export const getPosts = async (
+	_req: Request,
+	res: Response,
+	next: NextFunction
+) => {
 	try {
 		const posts = await Post.find({}, { updatedAt: 0, __v: 0 });
 		res.status(200).json(posts);
 	} catch (err) {
-		if (!err.statusCode) {
-			err.statusCode = 500;
-		}
-		res.status(err.statusCode).json(err.message);
+		next(err);
 	}
 };
-export const addPost = async (req: Request | any, res: Response) => {
+export const addPost = async (
+	req: Request | any,
+	res: Response,
+	next: NextFunction
+) => {
 	try {
 		const { title, content } = req.body;
 		const { file = null } = req;
@@ -31,13 +37,14 @@ export const addPost = async (req: Request | any, res: Response) => {
 		await newPost.save();
 		res.status(201).json(newPost);
 	} catch (err) {
-		if (!err.statusCode) {
-			err.statusCode = 500;
-		}
-		res.status(err.statusCode).json(err.message);
+		next(err);
 	}
 };
-export const editPostLike = async (req: Request | any, res: Response) => {
+export const editPostLike = async (
+	req: Request | any,
+	res: Response,
+	next: NextFunction
+) => {
 	try {
 		const { _id } = req.body;
 		let updateLike = await Post.updateOne(
@@ -52,13 +59,14 @@ export const editPostLike = async (req: Request | any, res: Response) => {
 		);
 		res.status(200).json(updateLike);
 	} catch (err) {
-		if (!err.statusCode) {
-			err.statusCode = 500;
-		}
-		res.status(err.statusCode).json(err.message);
+		next(err);
 	}
 };
-export const editPost = async (req: Request | any, res: Response) => {
+export const editPost = async (
+	req: Request | any,
+	res: Response,
+	next: NextFunction
+) => {
 	try {
 		const { _id, title, content, prevImage } = req.body;
 		const { file = null } = req;
@@ -90,13 +98,14 @@ export const editPost = async (req: Request | any, res: Response) => {
 		let updatedPost = await Post.findOne({ _id: _id }, { image: 1 });
 		res.status(200).json(updatedPost);
 	} catch (err) {
-		if (!err.statusCode) {
-			err.statusCode = 500;
-		}
-		res.status(err.statusCode).json(err.message);
+		next(err);
 	}
 };
-export const deletePost = async (req: Request | any, res: Response) => {
+export const deletePost = async (
+	req: Request | any,
+	res: Response,
+	next: NextFunction
+) => {
 	try {
 		const { _id } = req.body;
 		const createdBy = {
@@ -115,19 +124,20 @@ export const deletePost = async (req: Request | any, res: Response) => {
 			.catch((err) => {
 				console.log(err);
 			});
-
 		res.status(200).json(deletedPost);
 	} catch (err) {
-		if (!err.statusCode) {
-			err.statusCode = 500;
-		}
-		res.status(err.statusCode).json(err.message);
+		next(err);
 	}
 };
 
-export const getPost = async (req: Request | any, res: Response) => {
+export const getPost = async (
+	req: Request | any,
+	res: Response,
+	next: NextFunction
+) => {
 	try {
 		const { _id } = req.params;
+
 		const createdBy = {
 			_id: req._id,
 			username: req.username,
@@ -142,9 +152,6 @@ export const getPost = async (req: Request | any, res: Response) => {
 		);
 		res.status(200).json(post);
 	} catch (err) {
-		if (!err.statusCode) {
-			err.statusCode = 500;
-		}
-		res.status(err.statusCode).json(err.message);
+		next(err);
 	}
 };

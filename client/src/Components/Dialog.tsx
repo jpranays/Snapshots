@@ -1,30 +1,27 @@
-import React, { FormEvent, useState, useEffect } from "react";
+import React, { FormEvent, useState, useEffect, memo } from "react";
 import { useDispatch } from "react-redux";
+
 import TextField from "@material-ui/core/TextField";
 import { Button, Typography } from "@material-ui/core";
+
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import axios from "axios";
+import { addPost, editPost } from "../api";
+
 function DialogBox({
 	open,
 	setOpen,
 	editing,
 	setEditing,
-	_id,
-	title,
-	content,
-	image,
+	currentPost,
 }: {
 	open: boolean;
 	setOpen: Function;
 	setEditing?: Function;
 	editing?: boolean;
-	_id?: string;
-	title?: string;
-	content?: string;
-	image?: any;
+	currentPost?: any;
 }) {
 	const [formState, setFormState] = useState<{
 		title: string;
@@ -38,75 +35,40 @@ function DialogBox({
 	useEffect(() => {
 		if (editing) {
 			setFormState({
-				title: title!,
-				content: content!,
+				title: currentPost?.title!,
+				content: currentPost?.content!,
 				image: null,
 			});
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	const dispatch = useDispatch();
 	const [imageSelected, setImageSelected] = useState(false);
 	async function handleSubmit(e: FormEvent) {
 		e.preventDefault();
+
 		const formData = new FormData();
+
 		formData.append("title", formState.title);
 		formData.append("content", formState.content);
-		formData.append("file", formState.image ? formState.image : image);
-		formData.append("_id", _id!);
-		if (editing) {
-			formData.append("prevImage", image);
-			if (formState.image) {
-				const {
-					data: { image: myImage },
-				} = await axios.post("/posts/updatepost", formData, {
-					headers: {
-						"Content-Type": "multipart/form-data",
-						Authorization: `Bearer ${
-							JSON.parse(localStorage.getItem("profile")!).token
-						}`,
-					},
-				});
+		formData.append(
+			"file",
+			formState.image ? formState.image : currentPost?.image
+		);
+		formData.append("_id", currentPost?._id!);
 
-				dispatch({
-					type: "EDIT",
-					payload: {
-						_id,
-						myImage,
-						...formState,
-					},
-				});
+		if (editing) {
+			formData.append("prevImage", currentPost?.image);
+
+			if (formState.image) {
+				dispatch(editPost(currentPost?._id!, formState, formData));
 			} else {
 				formData.append("prevImage", "");
-				const {
-					data: { image: myImage },
-				} = await axios.post("/posts/updatepost", formData, {
-					headers: {
-						"Content-Type": "multipart/form-data",
-						Authorization: `Bearer ${
-							JSON.parse(localStorage.getItem("profile")!).token
-						}`,
-					},
-				});
-				dispatch({
-					type: "EDIT",
-					payload: {
-						_id,
-						myImage,
-						...formState,
-					},
-				});
+				dispatch(editPost(currentPost?._id!, formState, formData));
 			}
 			setEditing!(false);
 		} else {
-			let { data } = await axios.post("/posts/addpost", formData, {
-				headers: {
-					"Content-Type": "multipart/form-data",
-					Authorization: `Bearer ${
-						JSON.parse(localStorage.getItem("profile")!).token
-					}`,
-				},
-			});
-			dispatch({ type: "ADD", payload: data });
+			dispatch(addPost(formData));
 		}
 		setOpen(false);
 	}
@@ -144,6 +106,7 @@ function DialogBox({
 							});
 						}}
 						focused
+						required
 					/>
 					<TextField
 						id="outlined-multiline-static"
@@ -163,6 +126,7 @@ function DialogBox({
 								};
 							});
 						}}
+						required
 					/>
 					<div
 						style={{
@@ -232,4 +196,4 @@ function DialogBox({
 	);
 }
 
-export default DialogBox;
+export default memo(DialogBox);

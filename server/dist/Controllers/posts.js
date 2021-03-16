@@ -43,7 +43,7 @@ exports.getPost = exports.deletePost = exports.editPost = exports.editPostLike =
 var path_1 = __importDefault(require("path"));
 var fs_1 = __importDefault(require("fs"));
 var Post_1 = __importDefault(require("../Models/Post"));
-var getPosts = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+var getPosts = function (_req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var posts, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -56,17 +56,14 @@ var getPosts = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
                 return [3 /*break*/, 3];
             case 2:
                 err_1 = _a.sent();
-                if (!err_1.statusCode) {
-                    err_1.statusCode = 500;
-                }
-                res.status(err_1.statusCode).json(err_1.message);
+                next(err_1);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); };
 exports.getPosts = getPosts;
-var addPost = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+var addPost = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, title, content, _b, file, createdBy, newPost, err_2;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -91,17 +88,14 @@ var addPost = function (req, res) { return __awaiter(void 0, void 0, void 0, fun
                 return [3 /*break*/, 3];
             case 2:
                 err_2 = _c.sent();
-                if (!err_2.statusCode) {
-                    err_2.statusCode = 500;
-                }
-                res.status(err_2.statusCode).json(err_2.message);
+                next(err_2);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); };
 exports.addPost = addPost;
-var editPostLike = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+var editPostLike = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _id, updateLike, err_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -121,17 +115,14 @@ var editPostLike = function (req, res) { return __awaiter(void 0, void 0, void 0
                 return [3 /*break*/, 3];
             case 2:
                 err_3 = _a.sent();
-                if (!err_3.statusCode) {
-                    err_3.statusCode = 500;
-                }
-                res.status(err_3.statusCode).json(err_3.message);
+                next(err_3);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); };
 exports.editPostLike = editPostLike;
-var editPost = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+var editPost = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, _id, title, content, prevImage, _b, file, createdBy, updatedPost, err_4;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -169,17 +160,14 @@ var editPost = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
                 return [3 /*break*/, 4];
             case 3:
                 err_4 = _c.sent();
-                if (!err_4.statusCode) {
-                    err_4.statusCode = 500;
-                }
-                res.status(err_4.statusCode).json(err_4.message);
+                next(err_4);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); };
 exports.editPost = editPost;
-var deletePost = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+var deletePost = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _id, createdBy, prevImage, deletedPost, err_5;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -208,17 +196,14 @@ var deletePost = function (req, res) { return __awaiter(void 0, void 0, void 0, 
                 return [3 /*break*/, 4];
             case 3:
                 err_5 = _a.sent();
-                if (!err_5.statusCode) {
-                    err_5.statusCode = 500;
-                }
-                res.status(err_5.statusCode).json(err_5.message);
+                next(err_5);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); };
 exports.deletePost = deletePost;
-var getPost = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+var getPost = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _id, createdBy, post, err_6;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -239,10 +224,7 @@ var getPost = function (req, res) { return __awaiter(void 0, void 0, void 0, fun
                 return [3 /*break*/, 3];
             case 2:
                 err_6 = _a.sent();
-                if (!err_6.statusCode) {
-                    err_6.statusCode = 500;
-                }
-                res.status(err_6.statusCode).json(err_6.message);
+                next(err_6);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }

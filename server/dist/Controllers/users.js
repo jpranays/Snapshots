@@ -43,7 +43,7 @@ exports.verifyToken = exports.signin = exports.signup = void 0;
 var bcryptjs_1 = __importDefault(require("bcryptjs"));
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var User_1 = __importDefault(require("../Models/User"));
-var signup = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+var signup = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, username, email, password, confirmPassword, existingUser, hashedPassword, newUser, err_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -69,17 +69,14 @@ var signup = function (req, res) { return __awaiter(void 0, void 0, void 0, func
                 return [2 /*return*/, res.status(201).json({ message: "User Successfully Registered" })];
             case 5:
                 err_1 = _b.sent();
-                if (!err_1.statusCode) {
-                    err_1.statusCode = 500;
-                }
-                res.status(err_1.statusCode).json(err_1.message);
+                next(err_1);
                 return [3 /*break*/, 6];
             case 6: return [2 /*return*/];
         }
     });
 }); };
 exports.signup = signup;
-var signin = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+var signin = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, username, password, existingUser, isSame, token, err_2;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -116,11 +113,7 @@ var signin = function (req, res) { return __awaiter(void 0, void 0, void 0, func
                     })];
             case 4:
                 err_2 = _b.sent();
-                if (!err_2.statusCode) {
-                    err_2.statusCode = 500;
-                }
-                console.log(err_2);
-                res.status(err_2.statusCode).json(err_2.message);
+                next(err_2);
                 return [3 /*break*/, 5];
             case 5: return [2 /*return*/];
         }

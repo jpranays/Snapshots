@@ -1,19 +1,21 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
-import { postRouter } from "./routes/post";
 import multer from "multer";
 import path from "path";
 import { v4 } from "uuid";
+
+import { postRouter } from "./routes/post";
 import { userRouter } from "./routes/user";
+
 const app = express();
-const PORT: String | Number = process.env.PORT || 5000;
+const PORT: string | number = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
 app.use(express.static(path.join(path.resolve(), "/uploads")));
+
 const fileFilter = (
-	req: any,
+	_req: Request,
 	file: { mimetype: string },
 	cb: (arg0: null, arg1: boolean) => void
 ) => {
@@ -56,6 +58,12 @@ app.use(
 );
 app.use("/posts", postRouter);
 app.use("/user", userRouter);
+app.use((err: any, req: any, res: Response, next: NextFunction) => {
+	if (!err.statusCode) {
+		err.statusCode = 500;
+	}
+	res.status(err.statusCode).json(err.message);
+});
 mongoose
 	.connect("mongodb://localhost:27017/snapshots", {
 		useNewUrlParser: true,

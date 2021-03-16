@@ -9,7 +9,6 @@ export const auth = (req: Request | any, res: Response, next: NextFunction) => {
 
 		req._id = decodedData?._id!;
 		req.username = decodedData?.username!;
-		console.log(req._id, req.username);
 
 		next();
 	} catch (err) {
@@ -21,3 +20,4 @@ export const auth = (req: Request | any, res: Response, next: NextFunction) => {
 		res.status(err.statusCode).json(err.message);
 	}
 };
+

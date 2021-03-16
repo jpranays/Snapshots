@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 
 function Snapshot() {
 	return (
@@ -27,4 +27,4 @@ function Snapshot() {
 	);
 }
 
-export default Snapshot;
+export default memo(Snapshot);

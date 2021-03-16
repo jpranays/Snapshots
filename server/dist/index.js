@@ -5,17 +5,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var mongoose_1 = __importDefault(require("mongoose"));
-var post_1 = require("./routes/post");
 var multer_1 = __importDefault(require("multer"));
 var path_1 = __importDefault(require("path"));
 var uuid_1 = require("uuid");
+var post_1 = require("./routes/post");
 var user_1 = require("./routes/user");
 var app = express_1.default();
 var PORT = process.env.PORT || 5000;
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
 app.use(express_1.default.static(path_1.default.join(path_1.default.resolve(), "/uploads")));
-var fileFilter = function (req, file, cb) {
+var fileFilter = function (_req, file, cb) {
     if (file.mimetype === "image/jpg" ||
         file.mimetype === "image/jpeg" ||
         file.mimetype === "image/png") {
@@ -47,6 +47,12 @@ app.use("/posts/updatepost", multer_1.default({
 }).single("file"));
 app.use("/posts", post_1.postRouter);
 app.use("/user", user_1.userRouter);
+app.use(function (err, req, res, next) {
+    if (!err.statusCode) {
+        err.statusCode = 500;
+    }
+    res.status(err.statusCode).json(err.message);
+});
 mongoose_1.default
     .connect("mongodb://localhost:27017/snapshots", {
     useNewUrlParser: true,

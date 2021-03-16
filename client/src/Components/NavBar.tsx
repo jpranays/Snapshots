@@ -1,12 +1,15 @@
-import React from "react";
+import React, { memo } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+
 import { Button } from "@material-ui/core";
 import CameraEnhanceOutlinedIcon from "@material-ui/icons/CameraEnhanceOutlined";
-import { Link } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
 
 function NavBar({ setOpen }: { setOpen: Function }) {
 	const { isLoggedIn } = useSelector(({ user }: any) => user);
+
 	const dispatch = useDispatch();
+
 	function handleLogout() {
 		dispatch({ type: "LOGOUT" });
 	}
@@ -52,7 +55,7 @@ function NavBar({ setOpen }: { setOpen: Function }) {
 								textDecoration: "none",
 							}}
 						>
-							<Button variant="contained" color="default">
+							<Button variant="contained" color="primary">
 								Register
 							</Button>
 						</Link>
@@ -62,7 +65,7 @@ function NavBar({ setOpen }: { setOpen: Function }) {
 								textDecoration: "none",
 							}}
 						>
-							<Button variant="contained" color="default">
+							<Button variant="text" color="default">
 								Login
 							</Button>
 						</Link>
@@ -89,4 +92,4 @@ function NavBar({ setOpen }: { setOpen: Function }) {
 	);
 }
 
-export default NavBar;
+export default memo(NavBar);

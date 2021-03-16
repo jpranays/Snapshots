@@ -1,9 +1,13 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../Models/User";
 
-export const signup = async (req: Request, res: Response) => {
+export const signup = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
 	const { username, email, password, confirmPassword } = req.body;
 
 	if (password !== confirmPassword) {
@@ -19,14 +23,15 @@ export const signup = async (req: Request, res: Response) => {
 			await newUser.save();
 			return res.status(201).json({ message: "User Successfully Registered" });
 		} catch (err) {
-			if (!err.statusCode) {
-				err.statusCode = 500;
-			}
-			res.status(err.statusCode).json(err.message);
+			next(err);
 		}
 	}
 };
-export const signin = async (req: Request, res: Response) => {
+export const signin = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
 	const { username, password } = req.body;
 
 	try {
@@ -61,12 +66,7 @@ export const signin = async (req: Request, res: Response) => {
 			message: "User Successfully Logged-in",
 		});
 	} catch (err) {
-		if (!err.statusCode) {
-			err.statusCode = 500;
-		}
-		console.log(err);
-
-		res.status(err.statusCode).json(err.message);
+		next(err);
 	}
 };
 

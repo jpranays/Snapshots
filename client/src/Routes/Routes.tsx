@@ -1,14 +1,17 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
+
 import { Route, Switch } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
 import Dashboard from "../Components/Dashboard";
 import Login from "../Components/Login";
-import PrivateRoute from "../Components/PrivateRoute";
 import Signup from "../Components/Signup";
-import { useDispatch } from "react-redux";
+import { verifyUser } from "../api";
 function Routes() {
 	const dispatch = useDispatch();
+
 	const [loading, setLoading] = useState(true);
+
 	useEffect(() => {
 		setLoading(true);
 		(async () => {
@@ -19,31 +22,7 @@ function Routes() {
 				const { token: oldToken } = JSON.parse(
 					localStorage.getItem("profile")!
 				);
-				try {
-					const {
-						data: {
-							decodedData: { _id, username, avatar },
-						},
-					} = await axios.post("/user/verifytoken/", {
-						oldToken,
-					});
-
-					dispatch({
-						type: "AUTH",
-						payload: {
-							token: oldToken,
-							username: username,
-							_id: _id,
-							isLoggedIn: true,
-							avatar: avatar,
-						},
-					});
-				} catch (err) {
-					dispatch({
-						type: "LOGOUT",
-					});
-					console.log(err.message);
-				}
+				dispatch(verifyUser(oldToken));
 			} else {
 				dispatch({
 					type: "LOGOUT",
@@ -66,15 +45,16 @@ function Routes() {
 			});
 		}, 1000 * 60 * 60);
 		window.addEventListener("storage", handleInvalidToken, false);
-		return function () {
+		return () => {
 			window.removeEventListener("storage", handleInvalidToken, false);
 		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	return (
 		<>
 			{!loading && (
 				<Switch>
-					<PrivateRoute strict exact path="/" component={Dashboard} />
+					<Route strict exact path="/" component={Dashboard} />
 					<Route strict exact path="/signup" component={Signup} />
 					<Route strict exact path="/login" component={Login} />
 				</Switch>

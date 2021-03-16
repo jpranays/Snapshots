@@ -1,9 +1,13 @@
-import React, { useState } from "react";
-import { Button, Color, TextField, Typography } from "@material-ui/core";
-import CameraEnhanceOutlinedIcon from "@material-ui/icons/CameraEnhanceOutlined";
+import React, { memo, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import axios from "axios";
+
+import { Button, TextField, Typography } from "@material-ui/core";
+import CameraEnhanceOutlinedIcon from "@material-ui/icons/CameraEnhanceOutlined";
 import { Alert } from "@material-ui/lab";
+
+import { signUP } from "../api";
+
 function Signup() {
 	const [formstate, setFormState] = useState<{
 		username: string;
@@ -23,6 +27,7 @@ function Signup() {
 		class: "",
 		msg: "",
 	});
+	const dispatch = useDispatch();
 	function handleChange(e: any) {
 		setFormState((prevState) => {
 			return { ...prevState!, [e?.target?.name!]: e?.target?.value! };
@@ -30,30 +35,7 @@ function Signup() {
 	}
 	async function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
-		try {
-			const {
-				data: { message },
-				status,
-			} = await axios.post("/user/signup/", formstate);
-			setFormState({
-				username: "",
-				email: "",
-				password: "",
-				confirmPassword: "",
-			});
-			if (status === 201) {
-				setMessage({
-					class: "success",
-					msg: message,
-				});
-			}
-		} catch (err) {
-			console.log(err);
-			setMessage({
-				class: "error",
-				msg: "Something Went Wrong",
-			});
-		}
+		dispatch(signUP(formstate, setFormState, setMessage));
 	}
 
 	return (
@@ -86,7 +68,6 @@ function Signup() {
 						color: "black",
 					}}
 				>
-					{/* <h4>SnapShot</h4> */}
 					<CameraEnhanceOutlinedIcon elevation={3} />
 				</div>
 				<div
@@ -187,4 +168,4 @@ function Signup() {
 	);
 }
 
-export default Signup;
+export default memo(Signup);
