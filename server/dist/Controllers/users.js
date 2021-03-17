@@ -39,12 +39,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyToken = exports.signin = exports.signup = void 0;
+exports.verifyToken = exports.signin = exports.verifyUser = exports.signup = void 0;
 var bcryptjs_1 = __importDefault(require("bcryptjs"));
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var User_1 = __importDefault(require("../Models/User"));
+var nodemailer_1 = require("nodemailer");
+var SENDER = "pranay.jadhav@moderncoe.edu.in";
+var Transport = nodemailer_1.createTransport({
+    service: "gmail",
+    auth: {
+        user: SENDER,
+        pass: "Admin@987",
+    },
+});
+var mailOptions = {
+    from: SENDER,
+    to: "pranay1315@gmail.com",
+    subject: "ONE TIME PASSWORD",
+    html: "",
+};
 var signup = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, username, email, password, confirmPassword, existingUser, hashedPassword, newUser, err_1;
+    var _a, username, email, password, confirmPassword, existingUser, otp, newUser, err_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -52,32 +67,101 @@ var signup = function (req, res, next) { return __awaiter(void 0, void 0, void 0
                 if (!(password !== confirmPassword)) return [3 /*break*/, 1];
                 return [2 /*return*/, res.status(400).json({ message: "Passwords dont match" })];
             case 1:
-                _b.trys.push([1, 5, , 6]);
-                return [4 /*yield*/, User_1.default.findOne({ username: username })];
+                _b.trys.push([1, 4, , 5]);
+                return [4 /*yield*/, User_1.default.findOne({
+                        username: username,
+                        verified: true,
+                    })];
             case 2:
                 existingUser = _b.sent();
                 if (existingUser) {
                     return [2 /*return*/, res.status(422).json({ message: "User Already Exists" })];
                 }
-                return [4 /*yield*/, bcryptjs_1.default.hash(password, 12)];
+                otp = Math.floor(Math.random() * 10000);
+                newUser = new User_1.default({
+                    username: username,
+                    email: email,
+                    loginToken: {
+                        token: otp,
+                    },
+                });
+                mailOptions.to = email;
+                mailOptions.subject = "One Time Password";
+                mailOptions.html = "<h2>Kindly Enter This OTP To Register Account ,OTP Is Valid For Only 10 Minutes</h2><h3>" + otp + "</h3>";
+                return [4 /*yield*/, Promise.all([newUser.save(), Transport.sendMail(mailOptions)])];
             case 3:
-                hashedPassword = _b.sent();
-                newUser = new User_1.default({ username: username, email: email, password: hashedPassword });
-                return [4 /*yield*/, newUser.save()];
-            case 4:
                 _b.sent();
-                return [2 /*return*/, res.status(201).json({ message: "User Successfully Registered" })];
-            case 5:
+                return [2 /*return*/, res
+                        .status(200)
+                        .json({ message: "OTP sent successfully,check your Email" })];
+            case 4:
                 err_1 = _b.sent();
+                console.log(err_1);
                 next(err_1);
-                return [3 /*break*/, 6];
-            case 6: return [2 /*return*/];
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
         }
     });
 }); };
 exports.signup = signup;
+var verifyUser = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, username, email, password, OTP, existingUser, now, isValid, hashedPassword, newUser, err_2;
+    var _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _a = req.body, username = _a.username, email = _a.email, password = _a.password, OTP = _a.OTP;
+                _c.label = 1;
+            case 1:
+                _c.trys.push([1, 7, , 8]);
+                return [4 /*yield*/, User_1.default.findOne({
+                        username: username,
+                        email: email,
+                        "loginToken.token": OTP,
+                    })];
+            case 2:
+                existingUser = _c.sent();
+                if (!existingUser) return [3 /*break*/, 5];
+                now = Date.now();
+                isValid = now -
+                    Date.parse((_b = existingUser === null || existingUser === void 0 ? void 0 : existingUser.loginToken) === null || _b === void 0 ? void 0 : _b.tokenCreated);
+                if (isValid > 1000 * 60 * 10) {
+                    return [2 /*return*/, res.status(422).json({ message: "Token Expired " })];
+                }
+                return [4 /*yield*/, bcryptjs_1.default.hash(password, 12)];
+            case 3:
+                hashedPassword = _c.sent();
+                newUser = new User_1.default({
+                    username: username,
+                    email: email,
+                    password: hashedPassword,
+                    verified: true,
+                });
+                mailOptions.to = email;
+                mailOptions.subject = "Account Created Successfully";
+                mailOptions.html = "<h2>Thanks for using SnapShots</h2><h1>Welcome aboard " + username + "</h1>";
+                return [4 /*yield*/, Promise.all([
+                        newUser.save(),
+                        Transport.sendMail(mailOptions),
+                        User_1.default.deleteMany({ username: username, verified: false }),
+                    ])];
+            case 4:
+                _c.sent();
+                return [2 /*return*/, res.status(201).json({ message: "Account created successfully" })];
+            case 5: return [2 /*return*/, res.status(401).json({ message: "Something went wrong" })];
+            case 6: return [3 /*break*/, 8];
+            case 7:
+                err_2 = _c.sent();
+                console.log(err_2);
+                next(err_2);
+                return [3 /*break*/, 8];
+            case 8: return [2 /*return*/];
+        }
+    });
+}); };
+exports.verifyUser = verifyUser;
 var signin = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, username, password, existingUser, isSame, token, err_2;
+    var _a, username, password, existingUser, isSame, token, err_3;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -85,7 +169,10 @@ var signin = function (req, res, next) { return __awaiter(void 0, void 0, void 0
                 _b.label = 1;
             case 1:
                 _b.trys.push([1, 4, , 5]);
-                return [4 /*yield*/, User_1.default.findOne({ username: username })];
+                return [4 /*yield*/, User_1.default.findOne({
+                        username: username,
+                        verified: true,
+                    })];
             case 2:
                 existingUser = _b.sent();
                 if (!existingUser) {
@@ -112,8 +199,8 @@ var signin = function (req, res, next) { return __awaiter(void 0, void 0, void 0
                         message: "User Successfully Logged-in",
                     })];
             case 4:
-                err_2 = _b.sent();
-                next(err_2);
+                err_3 = _b.sent();
+                next(err_3);
                 return [3 /*break*/, 5];
             case 5: return [2 /*return*/];
         }

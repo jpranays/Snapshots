@@ -97,27 +97,30 @@ export const signUP = (
 		username: string;
 		password: string;
 	},
-	setFormState: Function,
-	setMessage: Function
-) => async (dispatch: Dispatch) => {
+	setMessage: Function,
+	setLoading: Function,
+	setOTPSent: Function
+) => async () => {
 	try {
+		setMessage({
+			class: "",
+			msg: "",
+		});
 		const {
 			data: { message },
 			status,
 		} = await axios.post("/user/signup/", formstate);
-		setFormState({
-			username: "",
-			email: "",
-			password: "",
-			confirmPassword: "",
-		});
-		if (status === 201) {
+
+		if (status === 200) {
+			setLoading(false);
 			setMessage({
 				class: "success",
 				msg: message,
 			});
+			setOTPSent(true);
 		}
 	} catch (err) {
+		setLoading(false);
 		setMessage({
 			class: "error",
 			msg: "Something Went Wrong",

@@ -7,3 +7,4 @@ exports.userRouter = express_1.Router();
 exports.userRouter.post("/signup", users_1.signup);
 exports.userRouter.post("/signin", users_1.signin);
 exports.userRouter.post("/verifytoken", users_1.verifyToken);
+exports.userRouter.post("/verifyuser", users_1.verifyUser);

@@ -5,6 +5,21 @@ var UserSchema = new mongoose_1.Schema({
     username: String,
     email: String,
     password: String,
+    loginToken: {
+        token: String,
+        tokenCreated: {
+            type: Date,
+            default: Date.now(),
+        },
+    },
+    emailToken: {
+        token: String,
+        tokenCreated: { type: Date, default: Date.now() },
+    },
+    verified: {
+        type: Boolean,
+        default: false,
+    },
 }, {
     _id: true,
     timestamps: true,

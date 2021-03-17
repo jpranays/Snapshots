@@ -3,6 +3,22 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../Models/User";
 
+import { createTransport } from "nodemailer";
+const SENDER = "pranay.jadhav@moderncoe.edu.in";
+
+const Transport = createTransport({
+	service: "gmail",
+	auth: {
+		user: SENDER,
+		pass: "Admin@987",
+	},
+});
+const mailOptions = {
+	from: SENDER,
+	to: "pranay1315@gmail.com",
+	subject: "ONE TIME PASSWORD",
+	html: "",
+};
 export const signup = async (
 	req: Request,
 	res: Response,
@@ -14,17 +30,80 @@ export const signup = async (
 		return res.status(400).json({ message: "Passwords dont match" });
 	} else {
 		try {
-			const existingUser = await User.findOne({ username: username });
+			const existingUser = await User.findOne({
+				username: username,
+				verified: true,
+			});
 			if (existingUser) {
 				return res.status(422).json({ message: "User Already Exists" });
 			}
-			let hashedPassword = await bcrypt.hash(password, 12);
-			const newUser = new User({ username, email, password: hashedPassword });
-			await newUser.save();
-			return res.status(201).json({ message: "User Successfully Registered" });
+			const otp = Math.floor(Math.random() * 10000);
+			const newUser = new User({
+				username,
+				email,
+				loginToken: {
+					token: otp,
+				},
+			});
+			mailOptions.to = email;
+			mailOptions.subject = "One Time Password";
+			mailOptions.html = `<h2>Kindly Enter This OTP To Register Account ,OTP Is Valid For Only 10 Minutes</h2><h3>${otp}</h3>`;
+			await Promise.all([newUser.save(), Transport.sendMail(mailOptions)]);
+			return res
+				.status(200)
+				.json({ message: "OTP sent successfully,check your Email" });
 		} catch (err) {
+			console.log(err);
 			next(err);
 		}
+	}
+};
+export const verifyUser = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	const { username, email, password, OTP } = req.body;
+
+	try {
+		const existingUser = await User.findOne({
+			username: username,
+			email: email,
+			"loginToken.token": OTP,
+		});
+
+		if (existingUser) {
+			let now = Date.now();
+			let isValid =
+				now -
+				Date.parse(
+					(existingUser?.loginToken?.tokenCreated as unknown) as string
+				);
+			if (isValid > 1000 * 60 * 10) {
+				return res.status(422).json({ message: "Token Expired " });
+			}
+			let hashedPassword = await bcrypt.hash(password, 12);
+			const newUser = new User({
+				username,
+				email,
+				password: hashedPassword,
+				verified: true,
+			});
+			mailOptions.to = email;
+			mailOptions.subject = "Account Created Successfully";
+			mailOptions.html = `<h2>Thanks for using SnapShots</h2><h1>Welcome aboard ${username}</h1>`;
+			await Promise.all([
+				newUser.save(),
+				Transport.sendMail(mailOptions),
+				User.deleteMany({ username: username, verified: false }),
+			]);
+			return res.status(201).json({ message: "Account created successfully" });
+		} else {
+			return res.status(401).json({ message: "Something went wrong" });
+		}
+	} catch (err) {
+		console.log(err);
+		next(err);
 	}
 };
 export const signin = async (
@@ -35,7 +114,10 @@ export const signin = async (
 	const { username, password } = req.body;
 
 	try {
-		const existingUser = await User.findOne({ username: username });
+		const existingUser = await User.findOne({
+			username: username,
+			verified: true,
+		});
 		if (!existingUser) {
 			return res.status(404).json({ message: "No Such User Found" });
 		}

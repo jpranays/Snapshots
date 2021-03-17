@@ -5,7 +5,10 @@ import { Link } from "react-router-dom";
 import { Button } from "@material-ui/core";
 import CameraEnhanceOutlinedIcon from "@material-ui/icons/CameraEnhanceOutlined";
 
-function NavBar({ setOpen }: { setOpen: Function }) {
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import AddIcon from "@material-ui/icons/Add";
+
+function NavBar({ setOpen }: { setOpen?: Function }) {
 	const { isLoggedIn } = useSelector(({ user }: any) => user);
 
 	const dispatch = useDispatch();
@@ -19,12 +22,11 @@ function NavBar({ setOpen }: { setOpen: Function }) {
 			style={{
 				display: "flex",
 				width: "100%",
-				height: "9vh",
+				height: "7vh",
 				alignItems: "center",
 				position: "sticky",
 				top: 0,
 				zIndex: 1,
-				boxShadow: "1px 1px 10px 1px  gray",
 			}}
 			className="background"
 		>
@@ -55,7 +57,7 @@ function NavBar({ setOpen }: { setOpen: Function }) {
 								textDecoration: "none",
 							}}
 						>
-							<Button variant="contained" color="primary">
+							<Button variant="contained" color="secondary">
 								Register
 							</Button>
 						</Link>
@@ -77,13 +79,14 @@ function NavBar({ setOpen }: { setOpen: Function }) {
 							variant="contained"
 							color="secondary"
 							onClick={() => {
-								setOpen(true);
+								setOpen!(true);
 							}}
+							title="Create SnapShot !"
 						>
-							Create SnapShot
+							<AddIcon />
 						</Button>
-						<Button variant="contained" color="default" onClick={handleLogout}>
-							Logout
+						<Button variant="contained" color="default" title="Logout">
+							<ExitToAppIcon onClick={handleLogout} />
 						</Button>
 					</>
 				)}
