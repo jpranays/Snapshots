@@ -8,6 +8,7 @@ import CameraEnhanceOutlinedIcon from "@material-ui/icons/CameraEnhanceOutlined"
 import { Alert } from "@material-ui/lab";
 
 import { signIN } from "../api";
+import NavBar from "./NavBar";
 
 function Login() {
 	const [formstate, setFormState] = useState<{
@@ -40,48 +41,7 @@ function Login() {
 	}
 	return (
 		<>
-			<nav
-				style={{
-					display: "flex",
-					width: "100%",
-					alignItems: "center",
-					height: "7vh",
-					position: "fixed",
-					top: 0,
-				}}
-				className="background"
-			>
-				<div
-					className="header-container"
-					style={{
-						textAlign: "left",
-						marginLeft: "5px",
-						marginRight: "auto",
-						color: "black",
-					}}
-				>
-					<CameraEnhanceOutlinedIcon elevation={3} />
-				</div>
-				<div
-					className="button-container"
-					style={{
-						display: "flex",
-						gap: 15,
-						marginRight: 10,
-					}}
-				>
-					<Link
-						to="/signup"
-						style={{
-							textDecoration: "none",
-						}}
-					>
-						<Button variant="contained" color="default">
-							Register
-						</Button>
-					</Link>
-				</div>
-			</nav>
+			<NavBar login={true} />
 			<div
 				style={{
 					display: "flex",

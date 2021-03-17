@@ -43,6 +43,7 @@ export const signup = async (
 				email,
 				loginToken: {
 					token: otp,
+					tokenCreated: Date.now(),
 				},
 			});
 			mailOptions.to = email;

@@ -8,6 +8,7 @@ import { Alert } from "@material-ui/lab";
 
 import { signUP } from "../api";
 import axios from "axios";
+import NavBar from "./NavBar";
 
 function Signup() {
 	const [formstate, setFormState] = useState<{
@@ -87,53 +88,12 @@ function Signup() {
 	};
 	return (
 		<>
-			<nav
-				style={{
-					display: "flex",
-					width: "100%",
-					height: "7vh",
-					alignItems: "center",
-					position: "fixed",
-					top: 0,
-				}}
-				className="background"
-			>
-				<div
-					className="header-container"
-					style={{
-						textAlign: "left",
-						marginLeft: "5px",
-						marginRight: "auto",
-						color: "black",
-					}}
-				>
-					<CameraEnhanceOutlinedIcon elevation={3} />
-				</div>
-				<div
-					className="button-container"
-					style={{
-						display: "flex",
-						gap: 15,
-						marginRight: 10,
-					}}
-				>
-					<Link
-						to="/login"
-						style={{
-							textDecoration: "none",
-						}}
-					>
-						<Button variant="contained" color="default">
-							Login
-						</Button>
-					</Link>
-				</div>
-			</nav>
+			<NavBar register={true} />
 			<div
 				style={{
 					display: "flex",
 					width: "100%",
-					height: "100vh",
+					height: "90vh",
 					justifyContent: "center",
 					alignItems: "center",
 				}}
