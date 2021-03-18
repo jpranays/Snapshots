@@ -7,7 +7,7 @@ import DialogBox from "./Dialog";
 import NavBar from "./NavBar";
 import Snapshot from "./Snapshot";
 import Post from "./Post";
-import { allPosts, deletePost, editPostLike } from "../api";
+import { allPosts, deletePost, editPostLike } from "../api/api";
 
 function Dashboard() {
 	const [open, setOpen] = useState<boolean>(false);

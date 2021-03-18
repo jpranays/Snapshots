@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
 
-import { Button } from "@material-ui/core";
+import { Button, Typography } from "@material-ui/core";
 import CameraEnhanceOutlinedIcon from "@material-ui/icons/CameraEnhanceOutlined";
 
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
@@ -17,7 +17,7 @@ function NavBar({
 	register?: boolean;
 	login?: boolean;
 }) {
-	const { isLoggedIn } = useSelector(({ user }: any) => user);
+	const { isLoggedIn, username } = useSelector(({ user }: any) => user);
 
 	const history = useHistory();
 
@@ -56,7 +56,7 @@ function NavBar({
 					<CameraEnhanceOutlinedIcon
 						elevation={3}
 						onClick={() => {
-							history.push("/");
+							return register || login ? history.push("/") : null;
 						}}
 					/>
 				</div>
@@ -97,7 +97,15 @@ function NavBar({
 					{!login && !register && (
 						<>
 							{isLoggedIn && (
-								<>
+								<div
+									style={{
+										display: "flex",
+										justifyContent: "center",
+										alignItems: "center",
+										width: "100%",
+										gap: 10,
+									}}
+								>
 									<Button
 										variant="contained"
 										color="secondary"
@@ -116,7 +124,15 @@ function NavBar({
 									>
 										<ExitToAppIcon />
 									</Button>
-								</>
+									<Typography
+										color="textSecondary"
+										style={{
+											textAlign: "center",
+										}}
+									>
+										<small>Welcome</small> <p>{username}</p>
+									</Typography>
+								</div>
 							)}
 							{!isLoggedIn && (
 								<>

@@ -1,4 +1,23 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -43,18 +62,22 @@ exports.verifyToken = exports.signin = exports.verifyUser = exports.signup = voi
 var bcryptjs_1 = __importDefault(require("bcryptjs"));
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var User_1 = __importDefault(require("../Models/User"));
+var dotenv = __importStar(require("dotenv"));
 var nodemailer_1 = require("nodemailer");
-var SENDER = "pranay.jadhav@moderncoe.edu.in";
+dotenv.config({ path: "../../.env" });
+console.log(process.env.EMAIL_SENDER);
+var SENDER = process.env.EMAIL_SENDER;
+var PASSWORD = process.env.EMAIL_PASSWORD;
 var Transport = nodemailer_1.createTransport({
     service: "gmail",
     auth: {
         user: SENDER,
-        pass: "Admin@987",
+        pass: PASSWORD,
     },
 });
 var mailOptions = {
     from: SENDER,
-    to: "pranay1315@gmail.com",
+    to: "",
     subject: "ONE TIME PASSWORD",
     html: "",
 };

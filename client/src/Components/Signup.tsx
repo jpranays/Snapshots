@@ -3,12 +3,11 @@ import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
 import { Button, TextField, Typography } from "@material-ui/core";
-import CameraEnhanceOutlinedIcon from "@material-ui/icons/CameraEnhanceOutlined";
 import { Alert } from "@material-ui/lab";
 
-import { signUP } from "../api";
 import axios from "axios";
 import NavBar from "./NavBar";
+import { signUP } from "../api/api";
 
 function Signup() {
 	const [formstate, setFormState] = useState<{

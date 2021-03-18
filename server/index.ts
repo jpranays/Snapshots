@@ -1,14 +1,21 @@
 import express, { NextFunction, Request, Response } from "express";
-import mongoose from "mongoose";
-import multer from "multer";
 import path from "path";
+import * as dotenv from "dotenv";
+
+import multer from "multer";
+import mongoose from "mongoose";
+
 import { v4 } from "uuid";
 
 import { postRouter } from "./routes/post";
 import { userRouter } from "./routes/user";
 
 const app = express();
+dotenv.config({ path: "../../.env" });
+
 const PORT: string | number = process.env.PORT || 5000;
+
+console.log(path.resolve());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -64,8 +71,9 @@ app.use((err: any, req: any, res: Response, next: NextFunction) => {
 	}
 	res.status(err.statusCode).json(err.message);
 });
+
 mongoose
-	.connect("mongodb://localhost:27017/snapshots", {
+	.connect(process.env.DB_CONNECTION! as string, {
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
 	})
@@ -73,5 +81,7 @@ mongoose
 		app.listen(PORT, () => console.log(`Server Running on ${PORT}`));
 	})
 	.catch((err) => {
+		console.log(process.env.DB_CONNECTION!);
+
 		console.log(err);
 	});

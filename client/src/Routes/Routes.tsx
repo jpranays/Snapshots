@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import Dashboard from "../Components/Dashboard";
 import Login from "../Components/Login";
 import Signup from "../Components/Signup";
-import { verifyUser } from "../api";
+import { verifyUser } from "../api/api";
 function Routes() {
 	const dispatch = useDispatch();
 

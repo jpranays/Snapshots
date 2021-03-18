@@ -1,16 +1,16 @@
 {
 	"name": "server",
 	"version": "1.0.0",
-	"description": "",
+	"description": "SERVER",
 	"main": "index.js",
 	"scripts": {
-		"server": "cd dist && node index.js",
-		"server-dev": "cd dist && nodemon index.js",
+		"server": "cd dist &&  node index.js",
+		"server-dev": "cd dist &&  nodemon index.js ",
 		"client-dev": "cd ../client && npm start",
 		"start": "concurrently \"npm run server-dev\" \"npm run client-dev\""
 	},
 	"keywords": [],
-	"author": "",
+	"author": "Pranay Jadhav",
 	"license": "ISC",
 	"dependencies": {
 		"@types/express": "^4.17.11",

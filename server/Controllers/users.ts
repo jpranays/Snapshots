@@ -2,20 +2,26 @@ import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../Models/User";
+import * as dotenv from "dotenv";
 
 import { createTransport } from "nodemailer";
-const SENDER = "pranay.jadhav@moderncoe.edu.in";
 
+dotenv.config({ path: "../../.env" });
+
+console.log(process.env.EMAIL_SENDER);
+
+const SENDER = process.env.EMAIL_SENDER;
+const PASSWORD = process.env.EMAIL_PASSWORD;
 const Transport = createTransport({
 	service: "gmail",
 	auth: {
 		user: SENDER,
-		pass: "Admin@987",
+		pass: PASSWORD,
 	},
 });
 const mailOptions = {
 	from: SENDER,
-	to: "pranay1315@gmail.com",
+	to: "",
 	subject: "ONE TIME PASSWORD",
 	html: "",
 };

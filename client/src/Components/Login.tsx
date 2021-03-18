@@ -4,11 +4,10 @@ import { Link, useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 import { Button, TextField, Typography } from "@material-ui/core";
-import CameraEnhanceOutlinedIcon from "@material-ui/icons/CameraEnhanceOutlined";
 import { Alert } from "@material-ui/lab";
 
-import { signIN } from "../api";
 import NavBar from "./NavBar";
+import { signIN } from "../api/api";
 
 function Login() {
 	const [formstate, setFormState] = useState<{
@@ -35,7 +34,7 @@ function Login() {
 			return { ...prevState!, [e?.target?.name!]: e?.target?.value! };
 		});
 	}
-	async function handleSubmit(e: React.FormEvent) {
+	function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
 		dispatch(signIN(formstate, setFormState, setMessage, history));
 	}
