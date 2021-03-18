@@ -65,7 +65,6 @@ var User_1 = __importDefault(require("../Models/User"));
 var dotenv = __importStar(require("dotenv"));
 var nodemailer_1 = require("nodemailer");
 dotenv.config({ path: "../../.env" });
-console.log(process.env.EMAIL_SENDER);
 var SENDER = process.env.EMAIL_SENDER;
 var PASSWORD = process.env.EMAIL_PASSWORD;
 var Transport = nodemailer_1.createTransport({

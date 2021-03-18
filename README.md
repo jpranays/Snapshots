@@ -4,7 +4,7 @@
 
 ## Description
 
-**A Simple TypeScript MERN Application that lets users Create,Manage Snapshots of Beautiful,Unforgettable Memories.**
+**A TypeScript MERN Application that lets users Create,Manage Snapshots of Beautiful,Unforgettable Memories.**
 
 # 🛠 Tools Used 🔧
 
@@ -52,6 +52,34 @@ npm run server
 ```
 npm run start
 ```
+
+## `Registration`
+
+![RegiStration](./public/Registration%20.gif)
+
+## `Login`
+
+![Login](./public/Login.gif)
+
+## `Creating Snapshots`
+
+![Creating Snapshots](./public/Creating_Snapshot.gif)
+
+## `Editing Snapshots`
+
+![Editing Snapshots](./public/Editing_Snapshot.gif)
+
+## `Liking Snapshots`
+
+![Liking Snapshots](./public/Liking_Snapshot.gif)
+
+## `Deleting Snapshots`
+
+![Deleting Snapshots](./public/Deleting_Snapshot.gif)
+
+## `Logout`
+
+![Logout](./public/Logout.gif)
 
 ## Authors
 

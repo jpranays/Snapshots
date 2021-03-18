@@ -8,8 +8,6 @@ import { createTransport } from "nodemailer";
 
 dotenv.config({ path: "../../.env" });
 
-console.log(process.env.EMAIL_SENDER);
-
 const SENDER = process.env.EMAIL_SENDER;
 const PASSWORD = process.env.EMAIL_PASSWORD;
 const Transport = createTransport({
