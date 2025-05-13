@@ -1,4 +1,4 @@
-# 🎞📸 `Snap-Shots` 📸🎞   
+# 🎞📸 `Snap-Shots` 📸🎞    
 
 🌈🌍 **_A Fullstack MERN Application_** 
 
